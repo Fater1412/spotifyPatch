@@ -45,7 +45,7 @@ function Get-File
 
   if ($useBitTransfer)
   {
-    Write-Information -MessageData ''
+    Write-Information -MessageData 'Using a fallback BitTransfer method since you are running Windows PowerShell'
     Start-BitsTransfer -Source $Uri -Destination "$($TargetFile.FullName)"
   }
   else
@@ -72,10 +72,10 @@ function Get-File
       $targetStream.Write($buffer, 0, $count)
       $count = $responseStream.Read($buffer, 0, $buffer.length)
       $downloadedBytes = $downloadedBytes + $count
-      Write-Progress -Activity "Downloading some shit called '$downloadedFileName'\n" -Status "Downloaded shit ($([System.Math]::Floor($downloadedBytes/1024))K of $($totalLength)K): " -PercentComplete ((([System.Math]::Floor($downloadedBytes / 1024)) / $totalLength) * 100)
+      Write-Progress -Activity "Downloading file '$downloadedFileName'" -Status "Downloaded ($([System.Math]::Floor($downloadedBytes/1024))K of $($totalLength)K): " -PercentComplete ((([System.Math]::Floor($downloadedBytes / 1024)) / $totalLength) * 100)
     }
 
-    Write-Progress -Activity "Finished downloading shit '$downloadedFileName'"
+    Write-Progress -Activity "Finished downloading file '$downloadedFileName'"
 
     $targetStream.Flush()
     $targetStream.Close()
@@ -104,7 +104,7 @@ function Test-SpotifyVersion
 
 Write-Host @'
 **********************************
-Credit : God
+Credits : GOD
 **********************************
 '@
 
@@ -114,7 +114,7 @@ $spotifyApps = Join-Path -Path $spotifyDirectory -ChildPath 'Apps'
 
 [System.Version] $actualSpotifyClientVersion = (Get-ChildItem -LiteralPath $spotifyExecutable -ErrorAction:SilentlyContinue).VersionInfo.ProductVersionRaw
 
-Write-Host "Don't Panic if spotify gets closed`n"
+Write-Host "pls dont panik if spotify closes.....it'll reopen again.....n"
 Stop-Process -Name Spotify
 Stop-Process -Name SpotifyWebHelper
 
@@ -125,16 +125,15 @@ if ($PSVersionTable.PSVersion.Major -ge 7)
 
 if (Get-AppxPackage -Name SpotifyAB.SpotifyMusic)
 {
-  Write-Host "seems like the mcirosoft store version you are using is not supported`n"
+  
 
   if ($UninstallSpotifyStoreEdition)
   {
-    Write-Host "Uninstalling Spotify :( .`n"
     Get-AppxPackage -Name SpotifyAB.SpotifyMusic | Remove-AppxPackage
   }
   else
   {
-    Read-Host "Exiting...`nPress any random key to exit :)..."
+    Read-Host "Exiting...`nPress any key to exit..."
     exit
   }
 }
@@ -143,22 +142,22 @@ Push-Location -LiteralPath $env:TEMP
 try
 {
   # Unique directory name based on time
-  New-Item -Type Directory -Name "kulp-$(Get-Date -UFormat '%Y-%m-%d_%H-%M-%S')" |
+  New-Item -Type Directory -Name "pollard-$(Get-Date -UFormat '%Y-%m-%d_%H-%M-%S')" |
   Convert-Path |
   Set-Location
 }
 catch
 {
   Write-Output $_
-  Read-Host 'Press any random key to exit...'
+  Read-Host 'Press any key to exit...'
   exit
 }
 
-Write-Host "downloading latest patch (chrome_elf.zip)...`n"
+Write-Host "patching ur shit (chrome_elf.zip)...`n"
 $elfPath = Join-Path -Path $PWD -ChildPath 'chrome_elf.zip'
 try
 {
-  $uri = 'https://github.com/Fater1412/spotifyPatch/blob/5ce19b4edeb886bdd9eacd5dfc0c34bb445693b8/Kulpp.zip'
+  $uri = 'https://github.com/mrpond/BlockTheSpot/releases/latest/download/chrome_elf.zip'
   Get-File -Uri $uri -TargetFile "$elfPath"
 }
 catch
@@ -175,7 +174,7 @@ $unsupportedClientVersion = ($actualSpotifyClientVersion | Test-SpotifyVersion -
 
 if (-not $UpdateSpotify -and $unsupportedClientVersion)
 {
-  if ((Read-Host -Prompt 'In order to install Block the Spot, your Spotify client must be updated. Do you want to continue? (Y/N)') -ne 'y')
+  if ((Read-Host -Prompt 'Your shit needs to be updated (i.e. your spotify ) . Do you want to continue? (Y/N)') -ne 'y')
   {
     exit
   }
@@ -183,7 +182,7 @@ if (-not $UpdateSpotify -and $unsupportedClientVersion)
 
 if (-not $spotifyInstalled -or $UpdateSpotify -or $unsupportedClientVersion)
 {
-  Write-Host 'Downloading the latest Spotify full setup, please wait...'
+  Write-Host 'downloading the latest sspotify full settup, please wait...'
   $spotifySetupFilePath = Join-Path -Path $PWD -ChildPath 'SpotifyFullSetup.exe'
   try
   {
@@ -200,21 +199,21 @@ if (-not $spotifyInstalled -or $UpdateSpotify -or $unsupportedClientVersion)
 
   [System.Security.Principal.WindowsPrincipal] $principal = [System.Security.Principal.WindowsIdentity]::GetCurrent()
   $isUserAdmin = $principal.IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator)
-  Write-Host 'Running installation...'
+  Write-Host 'installation is jogging ( running installation )'
   if ($isUserAdmin)
   {
     Write-Host
-    Write-Host 'Creating scheduled task...'
+   
     $apppath = 'powershell.exe'
     $taskname = 'Spotify install'
     $action = New-ScheduledTaskAction -Execute $apppath -Argument "-NoLogo -NoProfile -Command & `'$spotifySetupFilePath`'"
     $trigger = New-ScheduledTaskTrigger -Once -At (Get-Date)
     $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -WakeToRun
     Register-ScheduledTask -Action $action -Trigger $trigger -TaskName $taskname -Settings $settings -Force | Write-Verbose
-    Write-Host 'The install task has been scheduled. Starting the task...'
+  
     Start-ScheduledTask -TaskName $taskname
     Start-Sleep -Seconds 2
-    Write-Host 'Unregistering the task...'
+  
     Unregister-ScheduledTask -TaskName $taskname -Confirm:$false
     Start-Sleep -Seconds 2
   }
@@ -230,14 +229,14 @@ if (-not $spotifyInstalled -or $UpdateSpotify -or $unsupportedClientVersion)
   }
 
 
-  Write-Host 'Stopping Spotify...Again'
+  Write-Host 'Dont panik if spotify closes.....'
 
   Stop-Process -Name Spotify
   Stop-Process -Name SpotifyWebHelper
   Stop-Process -Name SpotifyFullSetup
 }
 
-Write-Host 'Patching Spotify...'
+Write-Host 'patching Spotify...'
 $patchFiles = (Join-Path -Path $PWD -ChildPath 'dpapi.dll'), (Join-Path -Path $PWD -ChildPath 'config.ini')
 
 Copy-Item -LiteralPath $patchFiles -Destination "$spotifyDirectory"
@@ -247,7 +246,7 @@ Pop-Location
 
 Remove-Item -LiteralPath $tempDirectory -Recurse
 
-Write-Host 'Patching Complete, starting Spotify...'
+Write-Host 'patching Complete, starting shit...'
 
 Start-Process -WorkingDirectory $spotifyDirectory -FilePath $spotifyExecutable
-Write-Host 'Done.'
+Write-Host 'Lupin suks'
